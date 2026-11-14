@@ -1,0 +1,28 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const {quadrant,localDate,validate,dailyTasks}=require('./model.js');
+assert.equal(quadrant(true,true),'do');assert.equal(quadrant(true,false),'plan');
+assert.equal(quadrant(false,true),'delegate');assert.equal(quadrant(false,false),'later');
+assert.equal(localDate(new Date(2026,10,15,0,1)),'2026-11-15');
+const task={id:'task-1',title:'Read notes',step:'Open notes',q:'plan',minutes:10,selected:'2026-11-15',done:null};
+const state={version:1,tasks:[task]};
+assert.deepEqual(validate(JSON.parse(JSON.stringify(state))),state);
+assert.equal(dailyTasks(state.tasks,'2026-11-15').length,1);
+assert.equal(dailyTasks(state.tasks,'2026-11-16').length,0);
+assert.equal(state.tasks.length,1,'A new day does not delete unfinished tasks');
+assert.equal(dailyTasks([{...task,done:'2026-11-15T10:00:00Z'}],'2026-11-15').length,0);
+assert.equal(validate({version:1,tasks:[{...task,minutes:0}]}).tasks[0].minutes,0);
+assert.throws(()=>validate({version:1,tasks:[task,task]}));
+assert.throws(()=>validate({version:1,tasks:[{...task,q:'unknown'}]}));
+assert.throws(()=>validate({version:1,tasks:[{...task,title:'  '}]}));
+assert.throws(()=>validate({version:1,tasks:[{...task,done:'invalid'}]}));
+assert.throws(()=>validate({version:3,tasks:[]}));
+// All precached resources exist and all HTML ID references in the script are valid.
+const html=fs.readFileSync(path.join(__dirname,'index.html'),'utf8');
+const js=fs.readFileSync(path.join(__dirname,'app.js'),'utf8');
+const ids=new Set([...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]));
+for(const [,id]of js.matchAll(/\$\('([^']+)'\)/g))assert(ids.has(id),`Missing element: ${id}`);
+for(const name of ['index.html','style.css','model.js','app.js','manifest.webmanifest','icon-192.png','icon-512.png'])assert(fs.existsSync(path.join(__dirname,name)),`Missing asset: ${name}`);
+JSON.parse(fs.readFileSync(path.join(__dirname,'manifest.webmanifest'),'utf8'));
+console.log('Passed: sorting, local dates, daily reset, backup round-trip, invalid backups, no-timer tasks, and asset/element integrity.');

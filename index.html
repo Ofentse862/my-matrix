@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#212121" id="theme-color">
+  <meta name="description" content="Your personal Eisenhower matrix. Sort your tasks, choose what matters today, and focus on one first step.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="My matrix">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <title>My matrix</title>
+  <script>try{const p=localStorage.getItem('matrix-theme')||'dark';document.documentElement.dataset.theme=p==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):p;}catch{}</script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <svg class="icon-definitions" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 11h18"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></symbol>
+  </defs></svg>
+  <main class="app">
+    <header class="topbar"><button class="icon-button" id="open-settings" aria-label="Open settings"><svg><use href="#i-menu"/></svg></button><span>Ofentse’s space</span><button class="icon-button" id="open-history" aria-label="Completed tasks"><svg><use href="#i-check"/></svg></button></header>
+    <section id="matrix-view" class="view" aria-labelledby="matrix-title">
+      <div class="page-heading"><h1 id="matrix-title">My matrix</h1><p id="date"></p></div>
+      <section class="today-preview" aria-labelledby="preview-title"><div class="section-heading"><h2 id="preview-title">Today <span id="preview-count" class="count"></span></h2><button class="text-button" data-view="today">View all <span aria-hidden="true">→</span></button></div><div id="today-preview-list"></div></section>
+      <div id="matrix" class="matrix"></div>
+    </section>
+    <section id="today-view" class="view" aria-labelledby="today-title" hidden>
+      <div class="page-heading"><h1 id="today-title">Today</h1><p id="today-date"></p></div>
+      <p class="page-note">Choose from your matrix. Start with one.</p><div id="today-list" class="today-list"></div>
+      <button class="outline-button wide" data-view="matrix">Choose from matrix</button><p class="daily-note">A new day clears this selection. Unfinished tasks stay in your matrix.</p>
+    </section>
+    <section id="done-view" class="view" aria-labelledby="done-title" hidden><div class="page-heading"><h1 id="done-title">Completed</h1><p>What you have already done.</p></div><div id="history-list"></div></section>
+    <div class="storage-note" id="storage-status" role="status" hidden></div>
+    <div class="bottom-dock"><form id="quick-form" class="composer"><label class="sr-only" for="quick-title">Add a task</label><input id="quick-title" maxlength="200" placeholder="Add a task" autocomplete="off"><button type="submit" class="send-button" aria-label="Add task"><svg><use href="#i-plus"/></svg></button></form><nav class="tabs" aria-label="Main navigation"><button data-view="matrix" aria-current="page"><svg><use href="#i-grid"/></svg>Matrix</button><button data-view="today"><svg><use href="#i-calendar"/></svg>Today <span id="tab-count" class="tab-count" hidden></span></button></nav></div>
+  </main>
+  <dialog id="editor" class="sheet"><form id="task-form"><div class="dialog-top"><h2 id="editor-title">Add a task</h2><button type="button" class="icon-button" data-close="editor" aria-label="Close"><svg><use href="#i-close"/></svg></button></div>
+    <label class="sr-only" for="title">Task name</label><input id="title" class="title-input" maxlength="200" placeholder="What needs doing?" required autocomplete="off">
+    <div class="switches"><label class="switch-row" for="important"><span>Important<small>It matters to you.</small></span><input id="important" type="checkbox" role="switch"><span class="switch" aria-hidden="true"></span></label><label class="switch-row" for="urgent"><span>Urgent<small>It needs attention soon.</small></span><input id="urgent" type="checkbox" role="switch"><span class="switch" aria-hidden="true"></span></label></div>
+    <p class="destination">Goes to <strong id="destination">Schedule</strong></p>
+    <label class="field-label" for="step">First step <span>optional</span></label><input id="step" maxlength="300" placeholder="For example: open my notes" autocomplete="off">
+    <label class="field-label" for="minutes">Time estimate</label><select id="minutes"><option value="0">No timer</option><option value="5">5 minutes</option><option value="10">10 minutes</option><option value="15">15 minutes</option><option value="25">25 minutes</option><option value="45">45 minutes</option><option value="60">60 minutes</option></select>
+    <label class="checkbox-row"><input id="pick-today" type="checkbox">Include in today</label><button class="primary-button wide" id="save-task" type="submit">Add to Schedule</button><button id="delete" type="button" class="text-button wide" hidden>Delete task</button>
+  </form></dialog>
+  <dialog id="settings" class="sheet"><div class="dialog-top"><h2>Settings</h2><button class="icon-button" data-close="settings" aria-label="Close"><svg><use href="#i-close"/></svg></button></div><h3 class="settings-label">Appearance</h3><div class="theme-picker" role="group" aria-label="Appearance"><button data-theme-choice="light">Light</button><button data-theme-choice="dark">Dark</button><button data-theme-choice="system">Device</button></div>
+    <h3 class="settings-label">Your data</h3><p class="help">Tasks are saved in this browser on this device. There is no account or automatic sync. Download a backup regularly; clearing website data can remove your tasks.</p><button id="export" class="outline-button wide">Download backup</button><label class="outline-button wide file-label" for="import">Restore backup<input id="import" type="file" accept="application/json,.json"></label><button class="text-button wide" id="view-completed">View completed tasks</button><button class="text-button wide" id="recover-storage" hidden>Download unreadable saved data</button>
+    <h3 class="settings-label">On your iPhone</h3><p class="help">Open the hosted app in Safari. Use Share → Add to Home Screen. Open it once while online before using it offline.</p><p class="help small" id="offline-status">Preparing offline access…</p><p class="help small">My matrix · v2.0 · No tracking or external fonts.</p>
+  </dialog>
+  <dialog id="focus-dialog" class="focus-sheet"><div class="dialog-top"><span class="focus-label">Focus</span><button class="icon-button" data-close="focus-dialog" aria-label="Close focus"><svg><use href="#i-close"/></svg></button></div><div class="focus-content"><span class="category" id="focus-category"></span><h2 id="focus-title"></h2><p class="focus-step-label" id="focus-step-label">First step</p><p id="focus-step"></p><div id="timer-area"><div id="clock" aria-label="Time remaining">10:00</div><p id="timer-status" class="help" role="status"></p><button id="toggle-timer" class="primary-button wide">Start</button></div><button id="finish-focus" class="outline-button wide">Mark complete</button></div><button class="text-button focus-back" data-close="focus-dialog">← Back to tasks</button></dialog>
+  <div id="toast" class="toast" role="status" hidden><span id="toast-text"></span><button id="toast-undo" hidden>Undo</button></div>
+  <script src="model.js"></script>
+  <script src="app.js"></script>
+</body></html>
